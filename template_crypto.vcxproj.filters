@@ -38,6 +38,9 @@
     <ClInclude Include="tcrypt\test.hpp">
       <Filter>tcrypt</Filter>
     </ClInclude>
+    <ClInclude Include="tcrypt\pcf.hpp">
+      <Filter>tcrypt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

@@ -15,25 +15,31 @@ namespace template_crypto
             return n * (n + 1) / 2;
         }
 
+        template < typename T, size_t height > constexpr auto make_pascal_triangle()
+        {
+            std::array<T, triangle_number(height) > data{};
+
+            data[0] = 1;
+
+            for (size_t i = 1, c = 1, pr = 0; i < height; pr += i, i++)
+            {
+                data[c++] = 1;
+
+                for (size_t j = 1; j < i; j++)
+                    data[c++] = data[pr + j - 1] + data[pr + j];
+
+                data[c++] = 1;
+            }
+
+            return data;
+        }
+
         template <typename T, size_t height> class PascalTriangle
         {
         public:
             using INT = T;
 
-            constexpr PascalTriangle()
-            {
-                data[0] = 1;
-
-                for (size_t i = 1, c = 1, pr = 0; i < height; pr += i, i++)
-                {
-                    data[c++] = 1;
-
-                    for (size_t j = 1; j < i; j++)
-                        data[c++] = data[pr + j - 1] + data[pr + j];
-
-                    data[c++] = 1;
-                }
-            }
+            constexpr PascalTriangle() : data(make_pascal_triangle<T, height>()) {}
 
             constexpr size_t size() const
             {
@@ -65,21 +71,21 @@ namespace template_crypto
 
             constexpr ElectiveTransform(const std::array<T, side> & symmetry)
             {
-                //static_assert(symmetry[0] % 2 != 0);
+                auto first = symmetry[0];
+                if (first % 2 == 0)
+                    first++;
 
                 for (size_t i = 0, c = 0; i < side; i++)
                 {
-                    data[c++] = symmetry[0];
+                    data[c++] = first;
                     for (size_t j = 1; j < i + 1; j++)
                         data[c++] = symmetry[j];
                 }
 
                 if (data[0] != 1)
-                {
                     mul_inverse = GetInverse(data[0]);
-
-                    //static_assert(mul_inverse * data[0] == 1);
-                }
+                else
+                    mul_inverse = 1;
             }
 
             constexpr size_t size() const { return side; }
@@ -97,6 +103,31 @@ namespace template_crypto
             std::array<T, triangle_number(side)> data;
         };
 
+        template <typename T, size_t side> class ElectiveTransform2
+        {
+        public:
+            using INT = T;
+
+            constexpr ElectiveTransform2(const std::array<T, side>& symmetry)
+                : sym(symmetry)
+            {
+                if (sym[0] % 2 == 0)
+                    sym[0]++;
+
+                if (sym[0] != 1)
+                    mul_inverse = GetInverse(sym[0]);
+                else
+                    mul_inverse = 1;
+            }
+
+            const T & inverse() const { return mul_inverse; }
+            const auto& symmetry() const { return sym; }
+
+        private:
+            T mul_inverse = 0;
+            std::array<T, side> sym;
+        };
+
         template <size_t height, typename T, size_t side > class ElectiveSymmetry
         {
         public:
@@ -104,8 +135,6 @@ namespace template_crypto
 
             ElectiveSymmetry(const std::array<T, side>& symmetry)
             {
-                //static_assert(symmetry[0] % 2 != 0);
-
                 {
                     T add_inverse = T(0) - symmetry[0];
 
@@ -161,6 +190,17 @@ namespace template_crypto
 
                 for (size_t j = i, p = 0; j > 0; j--, p++)
                     output[i] += typename ET::INT(0) - (et[i][j] * output[p] * et.inverse());
+            }
+        }
+
+        template <typename PASCAL_FORM, typename O, typename ET2> constexpr void ToPolynomial2(const PASCAL_FORM& _pascal, O& output, const ET2& et)
+        {
+            for (size_t i = 0, k = _pascal.size() - 1; i < output.size(); i++, k--)
+            {
+                output[i] = _pascal[k]; output[i] *= et.inverse();
+
+                for (size_t j = i, p = 0; j > 0; j--, p++)
+                    output[i] += typename ET2::INT(0) - (et.symmetry()[j] * output[p] * et.inverse());
             }
         }
     } 

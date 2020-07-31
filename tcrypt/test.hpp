@@ -41,7 +41,7 @@ TEST_CASE("bench", "[tcrypt::]")
 
     d8u::aligned_vector data(rv.begin(), rv.end());
 
-    constexpr auto reps = 64;
+    constexpr auto reps = 1000;
 
 
     d8u::transform::Password pw(std::string_view("testest"));
@@ -58,23 +58,29 @@ TEST_CASE("bench", "[tcrypt::]")
     template_crypto::encrypt::Long<uint64_t, 8> lec2(key2, iv2);
     template_crypto::decrypt::Long<uint64_t, 8> ldc2(key2, iv2);
 
-    alignas(16) std::array<sse_int::pint128_t, 8> key3{ 73, 23, 63, 23,73, 23, 63, 23 };
-    alignas(16) std::array<sse_int::pint128_t, 8> iv3{ 46, 47, 47, 85,2772, 252, 267, 236 };
+    //alignas(16) std::array<sse_int::pint128_t, 8> key3{ 73, 23, 63, 23,73, 23, 63, 23 };
+    //alignas(16) std::array<sse_int::pint128_t, 8> iv3{ 46, 47, 47, 85,2772, 252, 267, 236 };
 
-    alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 8> lec3(key3, iv3);
-    alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 8> ldc3(key3, iv3);
+    //alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 8> lec3(key3, iv3);
+    //alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 8> ldc3(key3, iv3);
 
-    alignas(16) std::array<sse_int::pint128_t, 4> key4{ 73, 23, 63, 23 };
-    alignas(16) std::array<sse_int::pint128_t, 4> iv4{ 46, 47, 47, 85 };
+    //alignas(16) std::array<sse_int::pint128_t, 4> key4{ 73, 23, 63, 23 };
+    //alignas(16) std::array<sse_int::pint128_t, 4> iv4{ 46, 47, 47, 85 };
 
-    alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 4> lec4(key4, iv4);
-    alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 4> ldc4(key4, iv4);
+    //alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 4> lec4(key4, iv4);
+    //alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 4> ldc4(key4, iv4);
 
-    alignas(16) std::array<sse_int::pint128_t, 2> key5{ 73, 23 };
-    alignas(16) std::array<sse_int::pint128_t, 2> iv5{ 46, 47 };
+    //alignas(16) std::array<sse_int::pint128_t, 2> key5{ 73, 23 };
+    //alignas(16) std::array<sse_int::pint128_t, 2> iv5{ 46, 47 };
 
-    alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 2> lec5(key5, iv5);
-    alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 2> ldc5(key5, iv5);
+    //alignas(16) template_crypto::encrypt::Long<sse_int::pint128_t, 2> lec5(key5, iv5);
+    //alignas(16) template_crypto::decrypt::Long<sse_int::pint128_t, 2> ldc5(key5, iv5);
+
+    constexpr std::array<uint32_t, 8> key6{ 73, 23, 63, 23,73, 23, 63, 23 };
+    constexpr std::array<uint32_t, 8> iv6{ 46, 47, 47, 85,2772, 252, 267, 236 };
+
+    template_crypto::encrypt::Long<uint32_t, 8> lec6(key6, iv6);
+    template_crypto::decrypt::Long<uint32_t, 8> ldc6(key6, iv6);
 
 
 
@@ -121,7 +127,7 @@ TEST_CASE("bench", "[tcrypt::]")
 
 
 
-    t1 = high_resolution_clock::now();
+    /*t1 = high_resolution_clock::now();
 
     for (size_t i = 0; i < reps; i++)
         lec3.Encrypt(data);
@@ -179,7 +185,26 @@ TEST_CASE("bench", "[tcrypt::]")
 
     t2 = high_resolution_clock::now();
 
-    std::cout << "D5 " << std::chrono::duration_cast<std::chrono::microseconds>(t2.time_since_epoch() - t1.time_since_epoch()).count() << std::endl;
+    std::cout << "D5 " << std::chrono::duration_cast<std::chrono::microseconds>(t2.time_since_epoch() - t1.time_since_epoch()).count() << std::endl;*/
+
+    t1 = high_resolution_clock::now();
+
+    for (size_t i = 0; i < reps; i++)
+        lec6.Encrypt(data);
+
+    t2 = high_resolution_clock::now();
+
+    std::cout << "E6 " << std::chrono::duration_cast<std::chrono::microseconds>(t2.time_since_epoch() - t1.time_since_epoch()).count() << std::endl;
+
+
+    t1 = high_resolution_clock::now();
+
+    for (size_t i = 0; i < reps; i++)
+        ldc6.Decrypt(data);
+
+    t2 = high_resolution_clock::now();
+
+    std::cout << "D6 " << std::chrono::duration_cast<std::chrono::microseconds>(t2.time_since_epoch() - t1.time_since_epoch()).count() << std::endl;
 
 
 

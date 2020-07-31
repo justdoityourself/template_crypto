@@ -28,8 +28,28 @@ namespace template_crypto
             }
 
         private:
-            PascalTriangle<T,side> pt;            
+            static constexpr PascalTriangle<T,side> pt = PascalTriangle<T, side>();
             ElectiveTransform<T,side> et;
+        };
+
+        template <typename T, size_t side> class EncodeContextLong2
+        {
+        public:
+
+            constexpr EncodeContextLong2(const std::array<T, side>& symmetry) : et(symmetry) {}
+
+            const auto& Pascal() const { return pt; }
+            const auto& Transform() const { return et; }
+
+            template <typename SRC, typename TMP, typename DEST> void Run(const SRC& source, TMP& scratch, DEST& dest)
+            {
+                ToPascal(source, scratch, Pascal());
+                ToPolynomial2(scratch, dest, Transform());
+            }
+
+        private:
+            static constexpr PascalTriangle<T, side> pt = PascalTriangle<T, side>();
+            ElectiveTransform2<T, side> et;
         };
 
         template <typename T, size_t side> class EncodeContextShort

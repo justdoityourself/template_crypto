@@ -280,6 +280,7 @@
     <ClInclude Include="tcrypt\encrypt.hpp" />
     <ClInclude Include="tcrypt\math.hpp" />
     <ClInclude Include="tcrypt\block.hpp" />
+    <ClInclude Include="tcrypt\pcf.hpp" />
     <ClInclude Include="tcrypt\test.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -4,8 +4,6 @@
 
 #include "block.hpp"
 
-#include "hash/polynomial.hpp"
-
 #include "d8u/buffer.hpp"
 
 namespace template_crypto
@@ -73,7 +71,7 @@ namespace template_crypto
 
         private:
 
-            EncodeContextLong<INT,block> ecl;
+            EncodeContextLong2<INT,block> ecl;
 
             std::array<INT, block> iv;
             std::array<INT, block> temp;
