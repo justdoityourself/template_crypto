@@ -135,14 +135,20 @@ namespace template_crypto
 
             ElectiveSymmetry(const std::array<T, side>& symmetry)
             {
+                auto first = symmetry[0];
+                if (first % 2 == 0)
+                    first++;
+
                 {
-                    T add_inverse = T(0) - symmetry[0];
+                    T add_inverse = T(0) - first;
 
                     for (size_t i = 1; i < height; i++)
-                        data[i * side] = (i % 2) ? add_inverse : symmetry[0];
+                        data[i * side] = (i % 2) ? add_inverse : first;
                 }  
 
-                for (size_t i = 0; i < side; i++)
+                data[0] = first;
+
+                for (size_t i = 1; i < side; i++)
                     data[i] = symmetry[i];
 
                 for (size_t i = 1; i < side; i++)

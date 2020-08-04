@@ -7,12 +7,73 @@
 
 #include "encrypt.hpp"
 #include "decrypt.hpp"
+#include "math.hpp"
 
 #include "d8u/memory.hpp"
 #include "d8u/random.hpp"
 #include "d8u/crypto.hpp"
 
 #include "hash/sse_int.hpp"
+
+template < size_t H, typename T, size_t L > void test(std::array<T, L> g, std::array<T, L> sy)
+{
+    using namespace template_crypto::math;
+
+    using A = std::array<T, L>;
+
+    static PascalTriangle<T, L> pt;
+    ElectiveTransform2<T, L> et(sy);
+    ElectiveSymmetry < H+L, T, L > es(sy);
+
+    A r{}, o1{};
+
+    static std::array<T, H+L> f1{};
+
+    ToPascal(g, r, pt);
+    ToPolynomial2(r, o1, et);
+
+    ToFunction(o1, f1, es);
+
+    for (size_t i = 0; i < H; i++)
+        std::cout << (int)f1[i] << " ";
+
+    std::cout << std::endl << std::endl;
+
+    static std::array<A, H> ga;
+
+    for (size_t i = 0; i < H; i++)
+    {
+        ToPascal(*((A*) & (f1[i])), r, pt);
+        ToPolynomial2(r, ga[i], et);
+    }
+
+    for (size_t j = 0; j < L; j++)
+    {
+        for (size_t i = 0; i < H; i++)
+            std::cout << (int)ga[i][j] << " ";
+
+        std::cout << std::endl << std::endl;
+    }
+
+    CHECK(true);
+}
+
+TEST_CASE("Function Alignment", "[tcrypt::]")
+{
+    using namespace template_crypto::math;
+
+    //test<256>(std::array<uint8_t, 4> { 73, 23, 63, 23 }, std::array<uint8_t, 4> { 4, 5, 2, 9 });
+
+    test<256/*64*1024*/>(std::array<uint16_t, 6> { 73, 23, 63, 23,63,99 }, std::array<uint16_t, 6> { 4, 5, 2, 9,93,111 });
+
+    CHECK(true);
+    /*ToPascal(g2, r, pt);
+    ToPolynomial2(r, o2, et);
+
+    ToFunction(o2, f2, es);
+
+    std::cout << d8u::util::to_hex(f2) << std::endl << std::endl;*/
+}
 
 TEST_CASE("Encrypt Random", "[tcrypt::]")
 {
