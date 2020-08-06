@@ -62,9 +62,19 @@ TEST_CASE("Function Alignment", "[tcrypt::]")
 {
     using namespace template_crypto::math;
 
-    //test<256>(std::array<uint8_t, 4> { 73, 23, 63, 23 }, std::array<uint8_t, 4> { 4, 5, 2, 9 });
+    test<256>(std::array<uint8_t, 2> { 14, 242 }, std::array<uint8_t, 2> { 7, 5 }); std::cout << std::endl << std::endl;
 
-    test<256/*64*1024*/>(std::array<uint16_t, 6> { 73, 23, 63, 23,63,99 }, std::array<uint16_t, 6> { 4, 5, 2, 9,93,111 });
+    test<256>(std::array<uint8_t, 3> { 16, 254, 244 }, std::array<uint8_t, 3> { 7, 5, 2 }); std::cout << std::endl << std::endl;
+
+    test<256>(std::array<uint8_t, 4> {  108, 164, 90, 154 }, std::array<uint8_t, 4> { 7, 5, 2, 9 }); std::cout << std::endl << std::endl;
+
+    test<256>(std::array<uint8_t, 5> { 57, 51, 113, 233, 177 }, std::array<uint8_t, 5> { 7, 5, 2, 9, 1 }); std::cout << std::endl << std::endl;
+     
+
+
+    test<256>(std::array<uint8_t, 4> { 73, 23, 63, 23 }, std::array<uint8_t, 4> { 7, 5, 2, 9 });
+
+    //test<256/*64*1024*/>(std::array<uint16_t, 6> { 73, 23, 63, 23,63,99 }, std::array<uint16_t, 6> { 7, 5, 2, 9,93,111 });
 
     CHECK(true);
     /*ToPascal(g2, r, pt);
